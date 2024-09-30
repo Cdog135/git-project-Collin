@@ -1,7 +1,9 @@
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.security.*;
 import java.util.zip.*;
+import java.nio.file.*;
 
 
 public class Blob {
@@ -126,29 +128,15 @@ public class Blob {
 
 
     public String getFileContent(String fileName) {
-        StringBuilder content = new StringBuilder();
-        File file = new File(fileName);
+      String content =  "";
+        try{
+        content = new String (Files.readString(Path.of(fileName)));
 
-        if (file.isDirectory())
-        {
-            //if its a folder then we have to get all the files and subfolders if there are any of them 
-            for (File f : file.listFiles())
-            {
-                content.append(f.getName() + "\n");
-            }
-        }
-        else
-        {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    content.append(line + "\n");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return content.toString();
+       }catch (Exception e)
+       {
+
+       }
+       return content;
     }
 
     private static String byteToHex(final byte[] hash) { // shamelessly copied from stack overflow:
