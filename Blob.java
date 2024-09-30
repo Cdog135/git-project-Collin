@@ -41,7 +41,7 @@ public class Blob {
             e.printStackTrace();
         }
         //writes to index 
-        try (FileWriter writer = new FileWriter("git/index/", true)) {
+        try (FileWriter writer = new FileWriter("git/index", true)) {
             if (isTree == false)
             {
                
@@ -103,9 +103,18 @@ public class Blob {
         }
         String treeSha1 = toSHA1(treeContent.toString());
         writer.write("tree " + treeSha1 + " " + path + "\n");
+          File treeObjectFile = new File("git/objects/" + treeSha1);
+            if (!treeObjectFile.exists())
+            {
+                treeObjectFile.createNewFile();
+            }
+            FileWriter objectWriter = new FileWriter(treeObjectFile);
+            objectWriter.write (treeContent.toString());
+                
+ 
         return treeSha1;
 
-        }
+    }
 
 
     public String toSHA1(String content) { // mostly from stack overflow:

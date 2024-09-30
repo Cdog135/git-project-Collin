@@ -9,8 +9,9 @@ public class GitTester {
         if (index.exists())
         {
             index.delete();
-            index.createNewFile();
         }
+        
+        index.createNewFile();
         // System.out.println("Testing tree");
         // File file = new File ("testForTree");
         // file.mkdir();
