@@ -52,19 +52,6 @@ public class Blob {
             {
                 //add all the files and 
                 String treeHash = addDirectoryToIndex(new File (fileName), writer, fileName);
-                File treeObjectFile = new File("git/objects/" + treeHash);
-                if (!treeObjectFile.exists())
-                {
-                    treeObjectFile.createNewFile();
-                }
-                String treeContent = getFileContent(fileName);
-                try (FileWriter objectWriter = new FileWriter(treeObjectFile)) 
-                {
-                    objectWriter.write(treeContent);
-                } catch (IOException e) 
-                {
-                    e.printStackTrace();
-                }
             }
         } 
          catch (IOException e) 
@@ -110,6 +97,7 @@ public class Blob {
             }
             FileWriter objectWriter = new FileWriter(treeObjectFile);
             objectWriter.write (treeContent.toString());
+            objectWriter.close();
                 
  
         return treeSha1;
