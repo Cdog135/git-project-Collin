@@ -41,11 +41,17 @@ public class Blob {
             e.printStackTrace();
         }
         //writes to index 
+        
+        
         try (FileWriter writer = new FileWriter("git/index", true)) {
             if (isTree == false)
             {
-               
+                
                 writer.write("blob " + hashedFileContent + " " + fileName + "\n");
+                try (FileWriter objectWriter = new FileWriter("git/objects/" + hashedFileContent)) 
+                {
+                     objectWriter.write("blob " + hashedFileContent + " " + fileName + "\n");
+                }
                 
             }
             else
@@ -59,6 +65,10 @@ public class Blob {
             e.printStackTrace();
         }
 
+    }
+    private void deleteDuplicates ()
+    {
+        
     }
     //adding all files to index froma tree
     private String addDirectoryToIndex(File folder, FileWriter writer, String path) throws IOException

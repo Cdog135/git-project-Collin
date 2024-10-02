@@ -14,7 +14,7 @@ public class Git {
         gitFolder = new File("git/");
         objectsFolder = new File("git/objects/");
         indexFile = new File("git/index/");
-        newIndexFile = new File("git/newIndex");
+        //newIndexFile = new File("git/newIndex");
 
         if (gitFolder.exists() && objectsFolder.exists() && indexFile.exists()) {
             System.out.println("Git Repository already exists");

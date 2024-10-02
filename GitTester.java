@@ -6,6 +6,9 @@ public class GitTester {
         Git git = new Git();
         Blob blob = new Blob ("test.txt");
         File index = new File ("git/index");
+        FileWriter writer = new FileWriter("git/index");
+        writer.write("hello");
+        writer.close();
         if (index.exists())
         {
             index.delete();
@@ -33,6 +36,7 @@ public class GitTester {
         //     e.printStackTrace();
         // }
         Blob treeBlob = new Blob ("testForTree");
+
         // System.out.println ("Testing non existent file");
         // try {
         //     Blob nonExistentBlob = new Blob ("nonExistentFile.txt");
