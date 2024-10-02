@@ -84,13 +84,13 @@ public class Blob {
             if (f.isDirectory())
             {
                 String treeSha1 = addDirectoryToIndex(f, writer, path + "/" + f.getName());
-                writer.write("tree " + treeSha1 + " " + path + "/" + f.getName() + "\n");
+                //writer.write("tree " + treeSha1 + " " + path + "/" + f.getName() + "\n");
                 treeContent.append ("tree " + treeSha1 + " " + f.getName() + "\n"); 
             }
             else
             {
                 String blobSha1 = new Blob(f.getName()).hashedFileContent;
-                writer.write("blob " + blobSha1 + " " + path + "/" + f.getName() + "\n");
+                //writer.write("blob " + blobSha1 + " " + path + "/" + f.getName() + "\n");
                 treeContent.append ("blob " + blobSha1 + " " + f.getName() + "\n");
             }
         }
