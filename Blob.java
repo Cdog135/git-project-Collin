@@ -1,51 +1,126 @@
+
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.security.*;
 import java.util.zip.*;
+import java.nio.file.*;
+
 
 public class Blob {
-    private String file;
-    private String hashedFileContent;
-    private File forObjectsFolder;
-    private String fileContent;
-    public static boolean zip = true; // by default it zips the data
+    private static String file;
+    private static String hashedFileContent;
+    private static File forObjectsFolder;
+    private static String fileContent;
+    public static boolean zip = false; // by default it zips the data
 
-    public Blob(String fileName) {
-        file = fileName;
-        fileContent = getFileContent(file);
-        hashedFileContent = toSHA1();
+    public Blob(String fileName) throws IOException {
+        File file2 = new File (fileName);
+        //file = fileName;
+        if(!file2.exists())
+        {
+            throw new FileNotFoundException("File does not exist");
+        }
+        this.file = fileName;
+        fileContent = getFileContent(fileName);
+        hashedFileContent = toSHA1(fileContent);
+        String sha1 =null;
         forObjectsFolder = new File("git/objects/" + hashedFileContent);
+        boolean isTree = true;
+        
+        //checks if tree
+        if (!file2.isDirectory())
+        {
+            isTree = false;
+        }
+       
         try {
-            if (!forObjectsFolder.exists()) {
+            if (!forObjectsFolder.exists() && !file2.isDirectory()) {
                 forObjectsFolder.createNewFile();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        try {
-            FileWriter writer = new FileWriter("git/index/", true);
-            writer.write(hashedFileContent + " " + file + "\n");
-            writer.close();
-
-            FileWriter writer2 = new FileWriter(forObjectsFolder);
-            writer2.write(fileContent);
-            writer2.close();
-        } catch (IOException e) {
+        //writes to index 
+        
+        
+        try (FileWriter writer = new FileWriter("git/index", true)) {
+            if (isTree == false)
+            {
+                
+                writer.write("blob " + hashedFileContent + " " + file2.getPath() + "\n");
+                try (FileWriter objectWriter = new FileWriter("git/objects/" + hashedFileContent)) 
+                {
+                     objectWriter.write(getFileContent(fileName));
+                }
+            }
+            else
+            {
+                //add all the files and 
+                String treeHash = addDirectoryToIndex(new File (fileName), writer, fileName);
+            }
+        } 
+         catch (IOException e) 
+        {
             e.printStackTrace();
         }
+
+    }
+    //adding all files to index froma tree
+    private String addDirectoryToIndex(File folder, FileWriter writer, String path) throws IOException
+    {
+        if (!folder.exists())
+        {
+            throw new FileNotFoundException("File does not exist");
+        }
+        File [] files = folder.listFiles();
+        StringBuilder treeContent = new StringBuilder();
+        if (files == null)
+        {
+            return null;
+        }
+        for (File f : files)
+        {
+            if (f.isDirectory())
+            {
+                String treeSha1 = addDirectoryToIndex(f, writer, f.getPath());
+                treeContent.append ("tree " + treeSha1 + " " + f.getName() + "\n"); 
+            }
+            else
+            {
+                String blobSha1 = new Blob(f.getPath()).hashedFileContent;
+                //writer.write("blob " + blobSha1 + " " + path + "/" + f.getName() + "\n");
+                treeContent.append ("blob " + blobSha1 + " " + f.getPath() + "\n");
+            }
+        }
+        String treeSha1 = toSHA1(treeContent.toString());
+        writer.write("tree " + treeSha1 + " " + path + "\n");
+          File treeObjectFile = new File("git/objects/" + treeSha1);
+            if (!treeObjectFile.exists())
+            {
+                treeObjectFile.createNewFile();
+            }
+            FileWriter objectWriter = new FileWriter(treeObjectFile);
+            objectWriter.write (treeContent.toString());
+            objectWriter.close();
+                
+ 
+        return treeSha1;
+
     }
 
-    public String toSHA1() { // mostly from stack overflow:
+
+    public String toSHA1(String content) { // mostly from stack overflow:
                              // https://stackoverflow.com/questions/4895523/java-string-to-sha1
         if (zip) { // compress the string (this is pseudocode for now bc havent written it yet)
-            fileContent = compress();
+            content = compress();
         }
 
         String sha1 = "";
         try {
             MessageDigest encrypter = MessageDigest.getInstance("SHA-1");
             encrypter.reset();
-            encrypter.update(fileContent.getBytes("UTF-8"));
+            encrypter.update(content.getBytes("UTF-8"));
             sha1 = byteToHex(encrypter.digest());
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,19 +128,17 @@ public class Blob {
         return sha1;
     }
 
+
     public String getFileContent(String fileName) {
-        StringBuilder content = new StringBuilder();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            while (reader.ready()) {
-                content.append((char) reader.read());
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String contentString = content.toString();
-        return contentString;
+      String content =  "";
+        try{
+        content = new String (Files.readString(Path.of(fileName)));
+
+       }catch (Exception e)
+       {
+
+       }
+       return content;
     }
 
     private static String byteToHex(final byte[] hash) { // shamelessly copied from stack overflow:
