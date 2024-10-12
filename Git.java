@@ -11,11 +11,14 @@ public class Git {
     File newIndexFile;
     File head;
 
+
     public Git() throws IOException {
         gitFolder = new File("git/");
         objectsFolder = new File("git/objects/");
         indexFile = new File("git/index/");
+
         head = new File ("git/HEAD");
+
 
         if (gitFolder.exists() && objectsFolder.exists() && indexFile.exists()) {
             System.out.println("Git Repository already exists");
@@ -76,6 +79,7 @@ public class Git {
 
         }
         
+
         }
         
         private static String byteToHex(final byte[] hash) { // shamelessly copied from stack overflow:
@@ -109,3 +113,4 @@ public class Git {
 
     }
     
+

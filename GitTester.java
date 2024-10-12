@@ -4,6 +4,7 @@ import java.util.*;
 
 public class GitTester {
     public static void main (String [] args) throws IOException {
+
         
         Git git = new Git();
         git.deleteGit();
@@ -22,28 +23,34 @@ public class GitTester {
         // {
         //     index.delete();
         // }
+
         
         index.createNewFile();
         System.out.println("Testing tree");
         File file = new File ("testForTree");
         file.mkdir();
         try {
+
             File test2 = new File ("testForTree/test2.txt");
             if (!test2.exists()){
                 test2.createNewFile();
             }
+
             FileWriter writer = new FileWriter("testForTree/test2.txt");
             writer.write("Big C in the house one");
             writer.close();
             
+
             File tree2 = new File("testForTree/testForTree2");
             if (!tree2.exists()){
                 tree2.mkdirs();
             }
+
             System.out.println("Testing directory inside a directory");
             File file2 = new File ("testForTree/testForTree2");
             file2.mkdir();
     
+
 
             File test3 = new File("testForTree/test3.txt");
             if (!tree2.exists()){
@@ -52,6 +59,7 @@ public class GitTester {
             FileWriter writer2 = new FileWriter("testForTree/test3.txt");
             writer2.write("Test 2 bro");
             writer2.close();
+
 
         } catch (IOException e) {
             e.printStackTrace();

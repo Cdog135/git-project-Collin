@@ -12,9 +12,11 @@ public class Blob {
     private static String hashedFileContent;
     private static File forObjectsFolder;
     private static String fileContent;
+
     public static boolean zip = false; // by default it zips the data
 
     public Blob(String fileName) throws IOException {
+
         File file2 = new File (fileName);
         //file = fileName;
         if(!file2.exists())
@@ -48,11 +50,14 @@ public class Blob {
             if (isTree == false)
             {
                 
+
                 writer.write("blob " + hashedFileContent + " " + file2.getPath() + "\n");
+
                 try (FileWriter objectWriter = new FileWriter("git/objects/" + hashedFileContent)) 
                 {
                      objectWriter.write(getFileContent(fileName));
                 }
+
             }
             else
             {
@@ -83,14 +88,18 @@ public class Blob {
         {
             if (f.isDirectory())
             {
+
                 String treeSha1 = addDirectoryToIndex(f, writer, f.getPath());
+
                 treeContent.append ("tree " + treeSha1 + " " + f.getName() + "\n"); 
             }
             else
             {
+
                 String blobSha1 = new Blob(f.getPath()).hashedFileContent;
                 //writer.write("blob " + blobSha1 + " " + path + "/" + f.getName() + "\n");
                 treeContent.append ("blob " + blobSha1 + " " + f.getPath() + "\n");
+
             }
         }
         String treeSha1 = toSHA1(treeContent.toString());
